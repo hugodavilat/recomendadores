@@ -1,0 +1,6 @@
+- Calcular explorabilidade para datasets
+- Separar acurácia por usuário (lfbca)
+- Tentar rodar novo recomendador (+ 2 que sejam plug and play)
+
+- Relatorio do trabalho de recSys
+- Apresentação RecSys
