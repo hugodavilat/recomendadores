@@ -9,20 +9,23 @@ class Merged:
     def __init__(self, id):
         self.id = id
         self.prec = 0
+        self.prec50 = 0
+        self.prec100 = 0
         self.rec = 0
         self.pred = 0
 
 user_to_merged = {}
 
-# linha 11: 0 11589 pre@10: 0.0 rec@10: 0.0
+# linha 11: 0 11589 pre@10: 0.0 rec@10: 0.0 prec@50: 0.0 prec@100 0.0
 with open(result) as result_file:
     lines = result_file.readlines()
     for line in lines[10:]:
         try:
-            _, uid, _, prec, _, rec  = line.strip().split(' ')
-            uid, prec, rec = int(uid), float(prec), float(rec)
+            _, uid, _, prec, _, rec, _, prec_50, _, prec_100  = line.strip().split(' ')
+            uid, prec, rec, prec_50, prec_100 = int(uid), float(prec), float(rec), float(prec_50), float(prec_100)
             user_to_merged[uid] = Merged(uid)
             user_to_merged[uid].prec, user_to_merged[uid].rec = prec, rec
+            user_to_merged[uid].prec50, user_to_merged[uid].rec100 = prec_50, prec_100
         except Exception:
             pass
 
@@ -35,14 +38,14 @@ with open(previsibility) as previsibility_file:
         except Exception:
             pass
 
-print('user_id\tprec@10\trec@10\tuser_predictability')
+print('user_id\tprec@10\tprec@50\tprec@100\trec@10\tuser_predictability')
 
 keys = [k for k in user_to_merged.keys()]
 keys.sort()
 
 for uid in keys:
     merged = user_to_merged[uid]
-    print(f'{merged.id}\t{merged.prec}\t{merged.rec}\t{merged.pred}')
+    print(f'{merged.id}\t{merged.prec}\t{merged.prec50}\t{merged.prec100}\t{merged.rec}\t{merged.pred}')
 
     
 
