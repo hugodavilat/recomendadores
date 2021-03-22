@@ -89,13 +89,13 @@ def main():
     CC.save_result("./tmp/")
     # CC.load_result("./tmp/")
 
-    result_out = open("./result/sigir15_zhang_top_" + str(top_k) + ".txt", 'w')
+    result_out = open("./result/gow_top_" + str(top_k) + ".txt", 'w')
 
     all_uids = list(range(user_num))
     all_lids = list(range(poi_num))
     np.random.shuffle(all_uids)
 
-    precision, recall = [], []
+    precision, recall, prec_50, prec_100 = [], [], [], []
     for cnt, uid in enumerate(all_uids):
         if uid in ground_truth:
             overall_scores = [AKDE.predict(uid, lid) * SC.predict(uid, lid) * CC.predict(uid, lid)
@@ -108,8 +108,10 @@ def main():
 
             precision.append(precisionk(actual, predicted[:10]))
             recall.append(recallk(actual, predicted[:10]))
+            prec_50.append(precisionk(actual, predicted[:50]))
+            prec_100.append(precisionk(actual, predicted[:100]))
 
-            print(cnt, uid, "pre@10:", np.mean(precision), "rec@10:", np.mean(recall))
+            print(cnt, uid, "pre@10:", np.mean(precision), "rec@10:", np.mean(recall), "pre@50:", np.mean(prec_50), "prec@100:", np.mean(prec_100))
             result_out.write('\t'.join([
                 str(cnt),
                 str(uid),

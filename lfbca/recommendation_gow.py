@@ -44,13 +44,13 @@ def main():
     LFBCA.precompute_rec_scores(training_matrix, social_matrix)
     LFBCA.save_result("./tmp/")
 
-    result_out = open("./result/gis13_wang_top_" + str(top_k) + ".txt", 'w')
+    result_out = open("./result/gow_top_" + str(top_k) + ".txt", 'w')
 
     all_uids = list(range(user_num))
     all_lids = list(range(poi_num))
     np.random.shuffle(all_uids)
 
-    precision, recall = [], []
+    precision, recall, prec_50, prec_100 = [], [], [], []
     for cnt, uid in enumerate(all_uids):
         if uid in ground_truth:
             overall_scores = [LFBCA.predict(uid, lid)
@@ -63,8 +63,10 @@ def main():
 
             precision.append(precisionk(actual, predicted[:10]))
             recall.append(recallk(actual, predicted[:10]))
+            prec_50.append(precisionk(actual, predicted[:50]))
+            prec_100.append(precisionk(actual, predicted[:100]))
 
-            print(cnt, uid, "pre@10:", np.mean(precision), "rec@10:", np.mean(recall))
+            print(cnt, uid, "pre@10:", np.mean(precision), "rec@10:", np.mean(recall), "pre@50:", np.mean(prec_50), "prec@100:", np.mean(prec_100))
             result_out.write('\t'.join([
                 str(cnt),
                 str(uid),
@@ -75,15 +77,15 @@ def main():
 if __name__ == '__main__':
     data_dir = "../data/"
 
-    size_file = data_dir + "Yelp_data_size.txt"
-    check_in_file = data_dir + "Yelp_checkins.txt"
-    train_file = data_dir + "Yelp_train.txt"
-    tune_file = data_dir + "Yelp_tune.txt"
-    test_file = data_dir + "Yelp_test.txt"
-    social_file = data_dir + "Yelp_social_relations.txt"
-    poi_file = data_dir + "Yelp_poi_coos.txt"
+    size_file = data_dir + "Gowalla_data_size.txt"
+    check_in_file = data_dir + "Gowalla_checkins.txt"
+    train_file = data_dir + "Gowalla_train.txt"
+    tune_file = data_dir + "Gowalla_tune.txt"
+    test_file = data_dir + "Gowalla_test.txt"
+    social_file = data_dir + "Gowalla_social_relations.txt"
+    poi_file = data_dir + "Gowalla_poi_coos.txt"
 
-    user_num, poi_num, _ = open(size_file, 'r').readlines()[0].strip('\n').split()
+    user_num, poi_num = open(size_file, 'r').readlines()[0].strip('\n').split()
     user_num, poi_num = int(user_num), int(poi_num)
 
     top_k = 100

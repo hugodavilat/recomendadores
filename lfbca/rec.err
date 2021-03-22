@@ -1,4 +1,0 @@
-Traceback (most recent call last):
-  File "recommendation.py", line 86, in <module>
-    user_num, poi_num = open(size_file, 'r').readlines()[0].strip('\n').split()
-ValueError: too many values to unpack (expected 2)
