@@ -1,6 +1,6 @@
 from prev import Explorability
 
-DATASET = 'Gowalla'
+DATASET = 'Yelp'
 
 data = '../data/' + DATASET + '_train.txt'
 # res = 'prev/' + DATASET + '_pred.txt'

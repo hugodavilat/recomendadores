@@ -1,5 +1,5 @@
 RECOMENDADOR = 'lfbca'
-DATASET = 'Gowalla'
+DATASET = 'Yelp'
 
 result = '../' + RECOMENDADOR + '/rec_' + DATASET + '.out'
 previsibility = '../previsibilidade/prev/' + DATASET + '_pred.txt'
