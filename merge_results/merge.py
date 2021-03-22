@@ -1,5 +1,5 @@
 RECOMENDADOR = 'lfbca'
-DATASET = 'Yelp'
+DATASET = 'gow'
 
 result = '../' + RECOMENDADOR + '/rec_' + DATASET + '.out'
 previsibility = '../previsibilidade/prev/' + DATASET + '_pred.txt'
@@ -8,7 +8,7 @@ previsibility = '../previsibilidade/prev/' + DATASET + '_pred.txt'
 class Merged:
     def __init__(self, id):
         self.id = id
-        self.prec = 0
+        self.prec10 = 0
         self.prec50 = 0
         self.prec100 = 0
         self.rec = 0
@@ -21,11 +21,11 @@ with open(result) as result_file:
     lines = result_file.readlines()
     for line in lines[10:]:
         try:
-            _, uid, _, prec, _, rec, _, prec_50, _, prec_100  = line.strip().split(' ')
-            uid, prec, rec, prec_50, prec_100 = int(uid), float(prec), float(rec), float(prec_50), float(prec_100)
+            _, uid, _, prec10, _, rec, _, prec_50, _, prec_100  = line.strip().split(' ')
+            uid, prec10, rec, prec_50, prec_100 = int(uid), float(prec10), float(rec), float(prec_50), float(prec_100)
             user_to_merged[uid] = Merged(uid)
-            user_to_merged[uid].prec, user_to_merged[uid].rec = prec, rec
-            user_to_merged[uid].prec50, user_to_merged[uid].rec100 = prec_50, prec_100
+            user_to_merged[uid].prec10, user_to_merged[uid].rec = prec10, rec
+            user_to_merged[uid].prec50, user_to_merged[uid].prec100 = prec_50, prec_100
         except Exception:
             pass
 
@@ -45,7 +45,7 @@ keys.sort()
 
 for uid in keys:
     merged = user_to_merged[uid]
-    print(f'{merged.id}\t{merged.prec}\t{merged.prec50}\t{merged.prec100}\t{merged.rec}\t{merged.pred}')
+    print("{}\t{}\t{}\t{}\t{}\t{}".format(merged.id, merged.prec10, merged.prec50, merged.prec100, merged.rec, merged.pred))
 
     
 
