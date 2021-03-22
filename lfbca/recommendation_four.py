@@ -75,15 +75,15 @@ def main():
 if __name__ == '__main__':
     data_dir = "../data/"
 
-    size_file = data_dir + "Yelp_data_size.txt"
-    check_in_file = data_dir + "Yelp_checkins.txt"
-    train_file = data_dir + "Yelp_train.txt"
-    tune_file = data_dir + "Yelp_tune.txt"
-    test_file = data_dir + "Yelp_test.txt"
-    social_file = data_dir + "Yelp_social_relations.txt"
-    poi_file = data_dir + "Yelp_poi_coos.txt"
+    size_file = data_dir + "Foursquare_data_size.txt"
+    check_in_file = data_dir + "Foursquare_checkins.txt"
+    train_file = data_dir + "Foursquare_train.txt"
+    tune_file = data_dir + "Foursquare_tune.txt"
+    test_file = data_dir + "Foursquare_test.txt"
+    social_file = data_dir + "Foursquare_social_relations.txt"
+    poi_file = data_dir + "Foursquare_poi_coos.txt"
 
-    user_num, poi_num, _ = open(size_file, 'r').readlines()[0].strip('\n').split()
+    user_num, poi_num = open(size_file, 'r').readlines()[0].strip('\n').split()
     user_num, poi_num = int(user_num), int(poi_num)
 
     top_k = 100

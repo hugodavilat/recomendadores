@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "recommendation_four.py", line 93, in <module>
+    main()
+  File "recommendation_four.py", line 41, in main
+    social_matrix = read_friend_data()
+  File "recommendation_four.py", line 9, in read_friend_data
+    social_data = open(social_file, 'r').readlines()
+FileNotFoundError: [Errno 2] No such file or directory: '../data/Foursquare_social_relations.txt'
