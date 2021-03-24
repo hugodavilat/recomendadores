@@ -81,13 +81,13 @@ def main():
 
     AKDE.precompute_kernel_parameters(training_matrix, poi_coos)
 
-    SC.compute_beta(training_matrix, social_matrix)
-    SC.save_result("./tmp/")
-    # SC.load_result("./tmp/")
+    # SC.compute_beta(training_matrix, social_matrix)
+    # SC.save_result("./tmp/")
+    SC.load_result("./tmp/")
 
-    CC.compute_gamma(training_matrix, poi_cate_matrix)
-    CC.save_result("./tmp/")
-    # CC.load_result("./tmp/")
+    # CC.compute_gamma(training_matrix, poi_cate_matrix)
+    # CC.save_result("./tmp/")
+    CC.load_result("./tmp/")
 
     result_out = open("./result/yelp_top_" + str(top_k) + ".txt", 'w')
 
