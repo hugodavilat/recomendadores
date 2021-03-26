@@ -11,6 +11,9 @@ class Explorability:
     def add_visit(self, place,  freq):
         self.sequence += [place]*freq
     
+    def add_visit_sg(self, place):
+        self.sequence.append(place)
+    
     def get_max_pred(self):
         ent = self.entropy_kontoyiannis(self.sequence)
         pred = self.max_predictability(ent, len(set(self.sequence)))
