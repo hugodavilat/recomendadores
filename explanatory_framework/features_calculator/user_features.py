@@ -2,9 +2,10 @@
 
 import pickle
 import numpy as np
+import pandas as pd
 
 from collections import defaultdict
-from scipy.stats import variation, tstd
+from scipy.stats import variation, tstd, entropy
 
 
 class FeatureCalculator:
@@ -54,6 +55,10 @@ class FeatureCalculator:
             phi += self.user_phis[usr]
         return phi
 
+    def entropy(self):
+        pd_series = pd.Series(self.ratings)
+        counts = pd_series.value_counts()
+        return entropy(counts)
     
     def get_metrics(self):
         phi = self.phi_id()
@@ -85,6 +90,7 @@ class FeatureCalculator:
             "rating_std_dev": std,
             "phi": phi,
             "avg_phi": avg_phi,
+            "entropy": entropy(),
         }
         return metrics_map
 
