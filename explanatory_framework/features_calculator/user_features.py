@@ -217,24 +217,24 @@ item_phis, user_phis = get_phis(urm)
 item_entropies, user_entropies = get_entropies(urm)
 item_long_tails, user_long_tails = get_long_tailors(urm)
 
-# num_users = urm.getcol(0).shape[0]
-# usr_out_str = "uid, " + ", ".join(METRICS) + '\n'
-# for usr in range(num_users):
-#     uf = UserFeatures(usr, urm, item_phis, user_phis, item_entropies, user_entropies, item_long_tails, user_long_tails)
-#     m = uf.get_metrics()
-#     usr_out_str += f'{m["id"]}, ' + ", ".join([f'{m[metric]:.5f}' for metric in METRICS]) + "\n"
-
-# # print(usr_out_str)
-# with open(f"../datasets/{DS}/user_metrics.csv", 'w') as metrics_file:
-#     metrics_file.write(usr_out_str)
-
-num_itens = urm.getrow(0).shape[1]
-itm_out_str = "iid, " + ", ".join(METRICS) + '\n'
-for itm in range(num_itens):
-    uf = ItemFeatures(itm, urm, item_phis, user_phis, item_entropies, user_entropies, item_long_tails, user_long_tails)
+num_users = urm.getcol(0).shape[0]
+usr_out_str = "uid, " + ", ".join(METRICS) + '\n'
+for usr in range(num_users):
+    uf = UserFeatures(usr, urm, item_phis, user_phis, item_entropies, user_entropies, item_long_tails, user_long_tails)
     m = uf.get_metrics()
-    itm_out_str += f'{m["id"]}, ' + ", ".join([f'{m[metric]:.5f}' for metric in METRICS]) + "\n"
+    usr_out_str += f'{m["id"]}, ' + ", ".join([f'{m[metric]:.5f}' for metric in METRICS]) + "\n"
 
-# print(itm_out_str)
-with open(f"../datasets/{DS}/item_metrics.csv", 'w') as metrics_file:
-    metrics_file.write(itm_out_str)
+# print(usr_out_str)
+with open(f"../datasets/{DS}/user_metrics.csv", 'w') as metrics_file:
+    metrics_file.write(usr_out_str)
+
+# num_itens = urm.getrow(0).shape[1]
+# itm_out_str = "iid, " + ", ".join(METRICS) + '\n'
+# for itm in range(num_itens):
+#     uf = ItemFeatures(itm, urm, item_phis, user_phis, item_entropies, user_entropies, item_long_tails, user_long_tails)
+#     m = uf.get_metrics()
+#     itm_out_str += f'{m["id"]}, ' + ", ".join([f'{m[metric]:.5f}' for metric in METRICS]) + "\n"
+
+# # print(itm_out_str)
+# with open(f"../datasets/{DS}/item_metrics.csv", 'w') as metrics_file:
+#     metrics_file.write(itm_out_str)
