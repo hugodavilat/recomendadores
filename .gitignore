@@ -134,5 +134,6 @@ dmypy.json
 .DS_Store*
 .DS_Store
 
-# Datasets
-datasets/
+# large multiple DSs
+UIR/
+URM/
