@@ -11,7 +11,7 @@ METRICS = ["gini", "variation", "num_ratings", "rating_avg",
            "rating_std", "phi", "avg_phi", "entropy", "entropy_of_consumed_sum",
            "entropy_of_consumed_avg", "proportion_long_tailors"]
 
-class FeatureCalculator:
+class UserFeatures:
     def __init__(self, id, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails, is_user=True):
         self.urm = urm
         self.id = id
@@ -22,16 +22,16 @@ class FeatureCalculator:
         self.num_users = urm.getcol(0).shape[0]
         self.non_zeros = None
         self.long_tailors = None,
-        if is_user:
-            self.long_tailors = user_long_tails
-            self.non_zeros = urm.getrow(id).nonzero()[1]
-            for j in self.non_zeros:
-                self.ratings.append(urm[self.id, j])
-        else:
-            self.long_tailors = item_long_tails
-            self.non_zeros = urm.getcol(id).nonzero()[0]
-            for i in self.non_zeros:
-                self.ratings.append(urm[i, self.id])
+        # if is_user:
+        self.long_tailors = user_long_tails
+        self.non_zeros = urm.getrow(id).nonzero()[1]
+        for j in self.non_zeros:
+            self.ratings.append(urm[self.id, j])
+        # else:
+        #     self.long_tailors = item_long_tails
+        #     self.non_zeros = urm.getcol(id).nonzero()[0]
+        #     for i in self.non_zeros:
+        #         self.ratings.append(urm[i, self.id])
         self.item_phis = itm_phis
         self.user_phis = usr_phis
         self.itm_H = itm_H
@@ -138,13 +138,13 @@ class FeatureCalculator:
 
 
 
-class UserFeatures(FeatureCalculator):
-    def __init__(self, uid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails):
-        super().__init__(uid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails, True)
-
-class ItemFeatures(FeatureCalculator):
-    def __init__(self, iid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails):
-        super().__init__(iid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails, False)
+# class UserFeatures(FeatureCalculator):
+#     def __init__(self, uid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails):
+#         super().__init__(uid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails, True)
+# 
+# class ItemFeatures(FeatureCalculator):
+#     def __init__(self, iid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails):
+#         super().__init__(iid, urm, itm_phis, usr_phis, itm_H, usr_H, item_long_tails, user_long_tails, False)
 
 def get_phis(urm):
     num_ratings_urm = len(urm.nonzero()[0])
