@@ -123,12 +123,14 @@ class UserFeatures:
         stds = [self.itm_std[itm] for itm in row]
         std_min = min(stds)
         std_max = max(stds)
-        
+        abn = 0
         if len(row) > 0:
             for itm in row:
                 contr = (self.itm_std[itm] - std_min)/(std_max - std_min)
                 abnormality_cr += (abs((self.urm[self.id, itm] - self.itm_avg[itm]) * contr)) ** 2
-            return abnormality_cr/len(row)
+            abn = abnormality_cr/len(row)
+            if not np.isnan(abn):
+                return abn
         return 0
     
     def itens_avg_num_ratings(self):
@@ -231,8 +233,8 @@ def get_itens_avg_std_and_num_ratings(urm):
     return itens_avg, itens_std, itens_num_rating
 
 
-DS = "ml-100k"
-# DS = "ml-1M"
+# DS = "ml-100k"
+DS = "ml-1M"
 urm = pickle.load(open(f"../datasets/{DS}/urm.pk", 'rb'))
 
 print("Calculating Phis...")
