@@ -137,3 +137,5 @@ dmypy.json
 # large multiple DSs
 UIR/
 URM/
+TS-split/
+data/

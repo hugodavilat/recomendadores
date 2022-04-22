@@ -6,6 +6,9 @@ import pandas as pd
 
 from collections import defaultdict
 from scipy.stats import variation, tstd, entropy
+from tqdm import tqdm
+
+from features_utils import pickle_cached
 
 METRICS = [
     "num_ratings",
@@ -22,6 +25,12 @@ METRICS = [
     "itens_avg_num_ratings",
     "avg_rating_from_itens_consumed",
 ]
+
+# DS = "ml-100k"
+# DS = "ml-1m"
+DS = "ml-10m"
+
+CACHE_PATH = f"../datasets/TS-split/{DS}/cache"
 
 class UserFeatures:
     def __init__(self, id, urm, itm_phis, itm_H, itm_long_tailors, itm_avg, itm_std, itm_num_rating):
@@ -169,34 +178,34 @@ class UserFeatures:
             "avg_rating_from_itens_consumed": self.avg_rating_from_itens_consumed()
         }
 
+@pickle_cached(path=f'{CACHE_PATH}/itm_phis.pk')
 def get_phis(urm):
     num_itens = urm.getrow(0).shape[1]
     num_users = urm.getcol(0).shape[0]
     item_phis = defaultdict(int)
     
-    for i in range(num_itens):
+    for i in tqdm(range(num_itens), desc="Calculating PHYs"):
         item_phis[i] = len(urm.getcol(i).nonzero()[0]) / num_users
     return item_phis
 
+@pickle_cached(path=f'{CACHE_PATH}/itm_entropies.pk')
 def get_entropies(urm):
     def entropy_(x):
         pd_series = pd.Series(x, dtype='float64')
         counts = pd_series.value_counts()
-        return entropy(counts)
-    
+        return entropy(counts)   
     num_itens = urm.getrow(0).shape[1]
     item_entropies = defaultdict(float)
-
-    for itm in range(num_itens):
+    for itm in tqdm(range(num_itens), desc="Calculating Entropies"):
         x = []
         for usr in urm.getcol(itm).nonzero()[0]:
             x.append(urm[usr, itm])
         item_entropies[itm] = entropy_(x)
-
     return item_entropies
 
+@pickle_cached(path=f'{CACHE_PATH}/itm_long_tailors.pk')
 def get_long_tailors(urm):
-    (U, I) = urm.get_shape()
+    (_, I) = urm.get_shape()
     R = urm.count_nonzero()
     distribution = []
     for j in range(I):
@@ -205,19 +214,18 @@ def get_long_tailors(urm):
     item_long_tails = set()
     views, i = 0, 0
     while views/R < 0.2:
-        item_long_tails.add(distribution[i][1])
+        item_long_tails.add(int(distribution[i][1]))
         views += distribution[i][0]
         i += 1
     return item_long_tails
 
+@pickle_cached(path=f'{CACHE_PATH}/itm_avg_std_num_rating.pk')
 def get_itens_avg_std_and_num_ratings(urm):
     num_itens = urm.getrow(0).shape[1]
-    num_users = urm.getcol(0).shape[0]
     itens_avg = defaultdict(float)
     itens_std = defaultdict(float)
     itens_num_rating = defaultdict(int)
-
-    for itm in range(num_itens):
+    for itm in tqdm(range(num_itens), desc="Calculating AVG and STD"):
         x = []
         for usr in urm.getcol(itm).nonzero()[0]:
             x.append(urm[usr, itm])
@@ -232,27 +240,32 @@ def get_itens_avg_std_and_num_ratings(urm):
     
     return itens_avg, itens_std, itens_num_rating
 
+@pickle_cached(path=f'{CACHE_PATH}/available_uids.pk')
+def get_available_uids(urm):
+    user_set = set()
+    (U, _) = urm.get_shape()
+    for i in tqdm(range(U), desc="Getting available UIDs"):
+        if (urm.getrow(i).count_nonzero() != 0):
+            user_set.add(i)
+    return user_set
 
-# DS = "ml-100k"
-DS = "ml-1M"
-urm = pickle.load(open(f"../datasets/{DS}/urm.pk", 'rb'))
+urm = pickle.load(open(f"../datasets/TS-split/{DS}/cache/train_urm.pk", 'rb'))
 
-print("Calculating Phis...")
 item_phis = get_phis(urm)
 
-print("Calculating Entropies...")
 item_entropies = get_entropies(urm)
 
-print("Calculating Long Tailors...")
 item_long_tails = get_long_tailors(urm)
 
-print("Calculating AVG, STD and NUM...")
 item_avg, item_std, item_num_rating = get_itens_avg_std_and_num_ratings(urm)
 
-print("Getting metrics...")
-num_users = urm.getcol(0).shape[0]
+users_set = get_available_uids(urm)
+
+num_rows = urm.getcol(0).shape[0]
 usr_out_str = "uid, " + ", ".join(METRICS) + '\n'
-for usr in range(num_users):
+for usr in tqdm(range(1, num_rows), desc="Metrics progress"):
+    if (not usr in users_set):
+        continue
     uf = UserFeatures(
         id = usr,
         urm = urm,
@@ -264,8 +277,8 @@ for usr in range(num_users):
         itm_num_rating = item_num_rating
     )
     m = uf.get_metrics()
-    usr_out_str += f'{int(m["id"])+1}, ' + ", ".join([f'{m[metric]:.5f}' for metric in METRICS]) + "\n"
+    usr_out_str += f'{int(m["id"])}, ' + ", ".join([f'{m[metric]:.5f}' for metric in METRICS]) + "\n"
 
 # print(usr_out_str)
-with open(f"../datasets/{DS}/user_metrics_v2.csv", 'w') as metrics_file:
+with open(f"../datasets/TS-split/{DS}/user_train_metrics.csv", 'w') as metrics_file:
     metrics_file.write(usr_out_str)
